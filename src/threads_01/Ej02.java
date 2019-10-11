@@ -1,26 +1,23 @@
 /*
-Programa en Java que cree dous fíos e os executa. Os fíos escriben dez veces un número de
-iteración do bucle e seu nome. En cada iteración, despois de escribir o seu nome, se bloquean
-durante un tempo aleatorio de segundos e después volven a estar dispoñibles para a súa
-execución.
+Programa que crea 4 fíos, os executa e espera a que estes terminen. Os fíos escriben 5 veces o
+número de iteración do bucle e o seu nome. En cada iteración, despois de escribir o seu nome,
+bloquéanse durante un segundo e volven a estar dispoñibles para a súa execución.
  */
 package threads_01;
 
-import java.util.Random;
-
-public class Ej01 extends Thread {
+public class Ej02 extends Thread {
 
     private String nombre;
 
-    public Ej01(String nombre) {
+    public Ej02(String nombre) {
         this.nombre = nombre;
     }
 
     @Override
     public void run() {
         System.out.println("Thread " + nombre + " start");
-        for (int i = 0; i < 10; i++) {
-            int wait = new Random().nextInt(3000) + 1001;
+        for (int i = 0; i < 5; i++) {
+            int wait = 1000;
             try {
                 Thread.sleep(wait);
             } catch (InterruptedException e) {
@@ -32,10 +29,10 @@ public class Ej01 extends Thread {
     }
 
     public static void main(String[] args) {
-        Ej01 ta = new Ej01("A");
-        Ej01 tb = new Ej01("B");
-        Ej01 tc = new Ej01("C");
-        Ej01 td = new Ej01("D");
+        Ej02 ta = new Ej02("A");
+        Ej02 tb = new Ej02("B");
+        Ej02 tc = new Ej02("C");
+        Ej02 td = new Ej02("D");
         ta.start();
         tb.start();
         tc.start();
