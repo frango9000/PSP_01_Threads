@@ -20,6 +20,7 @@ public class Ej05 extends Thread {
         this(name, null);
     }
 
+    // constructor que crea un thread  con otro thread hijo, el padre esperara al hijo para finalizar su codigo
     public Ej05(String name, Thread child) {
         this.name  = name;
         this.child = child;
@@ -29,7 +30,7 @@ public class Ej05 extends Thread {
     public void run() {
         if (child != null) {
             try {
-                child.join();
+                child.join();//esperamos al hijo
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -45,7 +46,7 @@ public class Ej05 extends Thread {
 
     private static void usandoJoin() {
         Ej05 threadB = new Ej05("B");
-        Ej05 threadA = new Ej05("A", threadB);
+        Ej05 threadA = new Ej05("A", threadB);//thread con un hijo quien debe terminar primero
 
         threadA.start();
         threadB.start();
@@ -59,7 +60,7 @@ public class Ej05 extends Thread {
         startByPrio(threadA, threadB);
     }
 
-    private static void startByPrio(Thread... threads) {
+    private static void startByPrio(Thread... threads) {//Ordenamos los threads en base a su prioridad para ser iniciados en orden de prioridad
         ArrayList<Thread> list = new ArrayList<>();
         for (int i = 10; i >= 1; i--) {
             for (Thread thread : threads) {

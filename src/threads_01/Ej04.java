@@ -7,8 +7,12 @@ package threads_01;
 
 public class Ej04 extends Thread {
 
+    //sw = 0 suma pares
+    //sw = 1 suma inpares
+    //sw = 2 suma terminaciones 2 y 3
     private int sw = 0;
 
+    //constructor que determina la suma a realizar
     public Ej04(int sw) {
         this.sw = sw;
     }
