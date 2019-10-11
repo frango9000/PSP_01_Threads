@@ -1,3 +1,5 @@
+package threads_00;
+
 public class ThreadEjemploB extends Thread {
 
     public ThreadEjemploB(String name) {

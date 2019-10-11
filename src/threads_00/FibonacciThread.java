@@ -1,3 +1,5 @@
+package threads_00;
+
 public class FibonacciThread extends Thread {
 
     private int n;
