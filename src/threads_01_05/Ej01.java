@@ -4,7 +4,7 @@ iteración do bucle e seu nome. En cada iteración, despois de escribir o seu no
 durante un tempo aleatorio de segundos e después volven a estar dispoñibles para a súa
 execución.
  */
-package threads_01;
+package threads_01_05;
 
 import java.util.Random;
 
@@ -14,21 +14,6 @@ public class Ej01 extends Thread {
 
     public Ej01(String nombre) {
         this.nombre = nombre;
-    }
-
-    @Override
-    public void run() {
-        System.out.println("Thread " + nombre + " start");
-        for (int i = 0; i < 10; i++) {
-            int wait = new Random().nextInt(3000) + 1001;
-            try {
-                Thread.sleep(wait);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            System.out.println(nombre + " " + i + " " + wait);
-        }
-        System.out.println("Thread " + nombre + " end");
     }
 
     public static void main(String[] args) {
@@ -49,5 +34,20 @@ public class Ej01 extends Thread {
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    public void run() {
+        System.out.println("Thread " + nombre + " start");
+        for (int i = 0; i < 10; i++) {
+            int wait = new Random().nextInt(3000) + 1001;
+            try {
+                Thread.sleep(wait);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println(nombre + " " + i + " " + wait);
+        }
+        System.out.println("Thread " + nombre + " end");
     }
 }

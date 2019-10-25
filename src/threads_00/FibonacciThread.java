@@ -9,6 +9,10 @@ public class FibonacciThread extends Thread {
         this.n = n;
     }
 
+    public static void main(String[] args) {
+        new FibonacciThread(100).start();
+    }
+
     @Override
     public void run() {
         long f = 1;
@@ -21,9 +25,5 @@ public class FibonacciThread extends Thread {
             System.out.println(f);
 
         }
-    }
-
-    public static void main(String[] args) {
-        new FibonacciThread(100).start();
     }
 }

@@ -7,7 +7,7 @@ escritura por pantalla do primeiro.
 a) faino con join
 b )faino con prioridades
  */
-package threads_01;
+package threads_01_05;
 
 import java.util.ArrayList;
 
@@ -24,18 +24,6 @@ public class Ej05 extends Thread {
     public Ej05(String name, Thread child) {
         this.name  = name;
         this.child = child;
-    }
-
-    @Override
-    public void run() {
-        if (child != null) {
-            try {
-                child.join();//esperamos al hijo
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        System.out.println("Hola soy el hilo " + name);
     }
 
     public static void main(String[] args) {
@@ -72,5 +60,17 @@ public class Ej05 extends Thread {
         for (Thread thread : list) {
             thread.start();
         }
+    }
+
+    @Override
+    public void run() {
+        if (child != null) {
+            try {
+                child.join();//esperamos al hijo
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("Hola soy el hilo " + name);
     }
 }

@@ -1,4 +1,4 @@
-package threads_01;
+package threads_01_05;
 
 import java.util.Random;
 
@@ -9,6 +9,18 @@ public class Ej03 extends Thread {
 
     public Ej03(int threadNum) {
         this.threadNum = threadNum;
+    }
+
+    public static void main(String[] args) {
+        System.out.println("Main Start");
+        Ej03 mainthread = new Ej03(4);
+        mainthread.start();
+        try {
+            mainthread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Main End");
     }
 
     @Override
@@ -37,17 +49,5 @@ public class Ej03 extends Thread {
             }
         }
         System.out.println("Thread " + threadNum + " end");
-    }
-
-    public static void main(String[] args) {
-        System.out.println("Main Start");
-        Ej03 mainthread = new Ej03(4);
-        mainthread.start();
-        try {
-            mainthread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Main End");
     }
 }

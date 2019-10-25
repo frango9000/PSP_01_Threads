@@ -6,17 +6,6 @@ public class ThreadEjemploB extends Thread {
         super(name);
     }
 
-    @Override
-    public void run() {
-        for (int i = 0; i < 1000; i++) {
-            double lag = 9.9999f / 8.999999;
-
-            System.out.println(i + " " + getName() + " " + lag);
-
-        }
-        System.out.println("Termina thread " + getName());
-    }
-
     public static void main(String[] args) {
         ThreadEjemploB tA = new ThreadEjemploB("A");
         ThreadEjemploB tB = new ThreadEjemploB("B");
@@ -28,5 +17,16 @@ public class ThreadEjemploB extends Thread {
 
         System.out.println("Termina thread main");
 
+    }
+
+    @Override
+    public void run() {
+        for (int i = 0; i < 1000; i++) {
+            double lag = 9.9999f / 8.999999;
+
+            System.out.println(i + " " + getName() + " " + lag);
+
+        }
+        System.out.println("Termina thread " + getName());
     }
 }

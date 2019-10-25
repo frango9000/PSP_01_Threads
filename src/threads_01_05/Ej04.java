@@ -2,7 +2,7 @@
 Realiza un programa en java que execute tres fíos de forma concurrente. Un de eles debe sumar os
 números pares del 1 ao 1000, outro os impares, e outro, os que terminen en dous ou en tres
  */
-package threads_01;
+package threads_01_05;
 
 
 public class Ej04 extends Thread {
@@ -15,6 +15,16 @@ public class Ej04 extends Thread {
     //constructor que determina la suma a realizar
     public Ej04(int sw) {
         this.sw = sw;
+    }
+
+    public static void main(String[] args) {
+        Ej04 pares = new Ej04(0);
+        Ej04 inpares = new Ej04(1);
+        Ej04 dosytres = new Ej04(2);
+
+        pares.start();
+        inpares.start();
+        dosytres.start();
     }
 
     @Override
@@ -43,15 +53,5 @@ public class Ej04 extends Thread {
                 break;
         }
         System.out.println("Thread " + sw + " sum: " + sum);
-    }
-
-    public static void main(String[] args) {
-        Ej04 pares = new Ej04(0);
-        Ej04 inpares = new Ej04(1);
-        Ej04 dosytres = new Ej04(2);
-
-        pares.start();
-        inpares.start();
-        dosytres.start();
     }
 }
