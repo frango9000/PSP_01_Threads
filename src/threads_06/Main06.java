@@ -10,7 +10,7 @@ public class Main06 extends Thread {
         int saldoInicial = 100;
         Caja caja = new Caja(saldoInicial);
 
-        int totalAudit = inOut(caja, 3000, 2000);
+        int totalAudit = inOut(caja, 20100, 20000);
 
         System.out.println("Total requerido = " + totalAudit);
         System.out.println("Total procesado = " + caja.toString());
@@ -23,7 +23,7 @@ public class Main06 extends Thread {
         while(ins+outs > 0){
             int maxOut = Math.min(outs, 5);
             for (int i = 0; i < maxOut; i++) {
-                int out = new Random().nextInt(401) + 100;
+                int out = new Random().nextInt(301) + 100;
                 Consumer c = new Consumer(caja, out);
                 c.start();
                 threads.add(c);
@@ -32,7 +32,7 @@ public class Main06 extends Thread {
             outs -= maxOut;
             int maxIn = Math.min(ins, 5);
             for (int i = 0; i < maxIn; i++) {
-                int in = new Random().nextInt(401) + 100;
+                int in = new Random().nextInt(301) + 100;
                 Producer p = new Producer(caja, in);
                 p.start();
                 threads.add(p);
