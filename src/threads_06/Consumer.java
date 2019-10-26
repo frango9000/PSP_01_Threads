@@ -21,7 +21,8 @@ public class Consumer extends Thread {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        caja.decSaldo(saldoOut);
+        caja.egresoThreadSafe(saldoOut);
+//        caja.egresoNoThreadSafe(saldoOut);
         if (caja.getSaldo() < 0)
             System.out.println(caja.getSaldo());
 

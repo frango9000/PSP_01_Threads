@@ -21,6 +21,7 @@ public class Producer extends Thread {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        caja.incSaldo(saldoIn);
+        caja.ingresoThreadSafe(saldoIn);
+//        caja.ingresoNoThreadSafe(saldoIn);
     }
 }

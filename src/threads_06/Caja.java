@@ -22,25 +22,32 @@ public class Caja {
         this.saldo = saldo;
     }
 
-    public synchronized void incSaldo(int saldo) {
+    public synchronized void ingresoThreadSafe(int saldo) {
         this.saldo += saldo;
         notify();
     }
 
-    public synchronized void decSaldo(int saldo) {
+    public void ingresoNoThreadSafe(int saldo) {
+        this.saldo += saldo;
+    }
+
+    public synchronized void egresoThreadSafe(int saldo) {
         boolean onHold = false;
         while (this.saldo < saldo) {
             System.out.println("Saldo Insuficiente, egreso en espera");
             onHold = true;
             try {
-                wait();
                 Thread.sleep(50);
+                wait();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
         if (onHold)
             System.out.println("Egreso en espera reanudado;");
+        this.saldo -= saldo;
+    }
+    public void egresoNoThreadSafe(int saldo) {
         this.saldo -= saldo;
     }
 
