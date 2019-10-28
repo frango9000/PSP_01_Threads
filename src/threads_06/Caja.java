@@ -22,25 +22,36 @@ public class Caja {
         this.saldo = saldo;
     }
 
-    public synchronized void incSaldo(int saldo) {
+    // en cada ingreso de saldo se les notifica a los hilos que pueden volver a intentar realizar un egreso
+    public synchronized void ingresoThreadSafe(int saldo) {
+        System.out.println("Ingreso realizado : " + this.saldo + " + " + saldo + " = " + (this.saldo+saldo));
         this.saldo += saldo;
         notify();
     }
 
-    public synchronized void decSaldo(int saldo) {
+    public void ingresoNoThreadSafe(int saldo) {
+        this.saldo += saldo;
+    }
+
+    // metodo para q el consumidor egrese saldo, primero compruba que el egreso se puede realizar sin
+    // dejar el saldo negativo, si no hay saldo suficiente el hilo entra en wait() a la espera de algun
+    // notify que llegara de cualquier ingreso nuevo, momento en el qque se volvera a realizar la
+    // verificacion de saldo suficiente
+    public synchronized void egresoThreadSafe(int saldo) {
         boolean onHold = false;
         while (this.saldo < saldo) {
-            System.out.println("Saldo Insuficiente, egreso en espera");
+            System.out.println("Saldo Insuficiente, egreso en espera " + this.saldo + " - " + saldo + " = " + (this.saldo-saldo));
             onHold = true;
             try {
                 wait();
-                Thread.sleep(50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        if (onHold)
-            System.out.println("Egreso en espera reanudado;");
+        System.out.println("Egreso" + (onHold? " en espera ":" directo ") + "finalizado: "  + this.saldo + " - " + saldo + " = " +(this.saldo-saldo));
+        this.saldo -= saldo;
+    }
+    public void egresoNoThreadSafe(int saldo) {
         this.saldo -= saldo;
     }
 

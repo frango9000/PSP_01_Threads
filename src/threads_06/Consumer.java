@@ -15,15 +15,16 @@ public class Consumer extends Thread {
 
     @Override
     public void run() {
-        int wait = new Random().nextInt(401) + 100;
-        try {
-            Thread.sleep(wait);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        caja.decSaldo(saldoOut);
+//        int wait = new Random().nextInt(401) + 100;
+//        try {
+//            Thread.sleep(wait);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+        caja.egresoThreadSafe(saldoOut);
+//        caja.egresoNoThreadSafe(saldoOut);
         if (caja.getSaldo() < 0)
-            System.out.println(caja.getSaldo());
+            System.out.println("ERROR, la caja no deberia caer en negativos: " + caja.getSaldo());
 
     }
 }
