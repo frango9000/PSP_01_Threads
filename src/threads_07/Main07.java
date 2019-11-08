@@ -1,42 +1,33 @@
-package threads_06;
+package threads_07;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Main06 extends Thread {
+public class Main07 {
 
     public static void main(String[] args) throws InterruptedException {
-        int saldoInicial = 100;
-        Caja caja = new Caja(saldoInicial);
-
-        int totalAudit = inOut(caja, 20200, 20000);
-
-        System.out.println();
-        System.out.println("Total requerido = " + totalAudit);
-        System.out.println("Total procesado = " + caja.toString());
-
+        Buzon buzon = new Buzon(3);
+        inOut(buzon, 600, 600);
     }
 
-    private static int inOut(Caja caja, int ins, int outs) throws InterruptedException {
-        int totalAudit = caja.getSaldo();
+
+    private static void inOut(Buzon buzon, int ins, int outs) throws InterruptedException {
         ArrayList<Thread> threads = new ArrayList<>();
-        while(ins+outs > 0){
+        while (ins + outs > 0) {
             int maxOut = Math.min(outs, 5);
             for (int i = 0; i < maxOut; i++) {
                 int out = new Random().nextInt(301) + 100;
-                Consumer c = new Consumer(caja, out);
+                Consumidor c = new Consumidor(buzon);
                 c.start();
                 threads.add(c);
-                totalAudit -= out;
             }
             outs -= maxOut;
             int maxIn = Math.min(ins, 5);
             for (int i = 0; i < maxIn; i++) {
                 int in = new Random().nextInt(301) + 100;
-                Producer p = new Producer(caja, in);
+                Productor p = new Productor(buzon, "Correo randID: " + in);
                 p.start();
                 threads.add(p);
-                totalAudit += in;
             }
             ins -= maxIn;
         }
@@ -44,7 +35,6 @@ public class Main06 extends Thread {
         for (Thread thread : threads) {
             thread.join();
         }
-        return totalAudit;
     }
 
 }

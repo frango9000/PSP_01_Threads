@@ -15,12 +15,12 @@ public class Producer extends Thread {
 
     @Override
     public void run() {
-//        int wait = new Random().nextInt(401) + 100;
-//        try {
-//            Thread.sleep(wait);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+        int wait = new Random().nextInt(201) + 100;
+        try {
+            Thread.sleep(wait);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         caja.ingresoThreadSafe(saldoIn);
 //        caja.ingresoNoThreadSafe(saldoIn);
     }
