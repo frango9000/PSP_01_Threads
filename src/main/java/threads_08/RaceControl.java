@@ -25,11 +25,12 @@ empate.
 package threads_08;
 
 import java.util.HashSet;
+import org.apache.commons.lang3.ArrayUtils;
 
 public class RaceControl {
 
     private RacePlayer[] raceTrack;
-    private int trackLength = 70;
+    private int trackLength = 71;
     private boolean gameOver = false;
 
     private HashSet<RacePlayer> players = new HashSet<>();
@@ -39,7 +40,6 @@ public class RaceControl {
     }
 
     public RaceControl(int trackLength) {
-        this();
         this.trackLength = trackLength;
     }
 
@@ -49,35 +49,43 @@ public class RaceControl {
     }
 
     public synchronized void movePlayer(RacePlayer movingPlayer, int moveSize) {
-        if (moveSize > 0) {
-            int actualPos = -1;
-            if (raceTrack.contains(movingPlayer)) {
-                actualPos = raceTrack.indexOf(movingPlayer);
-                raceTrack.remove(movingPlayer);
-            }
-            int newPos = Math.min((actualPos + moveSize), trackLength);
+
+        int actualPos = -1;
+        if (ArrayUtils.contains(raceTrack, movingPlayer)) {
+            actualPos            = ArrayUtils.indexOf(raceTrack, movingPlayer);
+            raceTrack[actualPos] = null;
+        }
+        int newPos = Math.min((actualPos + moveSize), trackLength - 1);
+        //System.out.println("Verificando movimiento de " + movingPlayer.getPlayerName() + " a la casilla " + newPos);
+        while (newPos > -1 && raceTrack[newPos] != null) {
+            newPos--;
+            System.out.println("Casilla " + newPos + " ocupada, intentando la casilla anterior...");
+        }
+        if (newPos > -1) {
             System.out.println(movingPlayer.getPlayerName() + " se mueve (" + moveSize + ") de " + actualPos + " a " + newPos);
-            if (newPos >= 0) {
-                while (raceTrack.get(newPos) != null) {
-                    newPos--;
-                    System.out.println("Casilla " + newPos + " ocupada");
-                }
-                gameOver = newPos == trackLength;
-                raceTrack.add(newPos, movingPlayer);
-            }
-        }//else not moving
+            gameOver          = newPos == trackLength - 1;
+            raceTrack[newPos] = movingPlayer;
+        }
         if (isGameOver()) {
             endRace();
         }
     }
 
-    public boolean isGameOver() {
-        return gameOver;
+    public synchronized boolean isGameOver() {
+        synchronized (this) {
+            return gameOver;
+        }
     }
 
     public void endRace() {
-        System.out.println("Finaliza la carrera, " + players.size() + " participantes.");
-        System.out.println("Ganador: " + raceTrack.get(trackLength).getPlayerName());
+        System.out.println("\nGAME OVER!\nFinaliza la carrera!, Ganador: " + raceTrack[trackLength - 1].getPlayerName());
+        int rank = 1;
+        System.out.println(String.format("%4s -> [%3s]%10s", "Rank", "Pos", "Nombre"));
+        for (int i = raceTrack.length - 1; i >= 0; i--) {
+            if (raceTrack[i] != null) {
+                System.out.println(String.format("%4d -> [%3d]%10s", rank++, i, raceTrack[i].playerName));
+            }
+        }
         for (RacePlayer racePlayer : players) {
             racePlayer.interrupt();
         }

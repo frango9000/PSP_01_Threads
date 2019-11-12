@@ -1,24 +1,23 @@
 package threads_08;
 
-public class Liebre extends RacePlayer {
+public class Mono extends RacePlayer {
 
-    public Liebre() {
-        super("Liebre");
-
+    public Mono() {
+        super("Mono");
     }
 
     @Override
     protected int getClassMove(int roll) {
-        if (roll < 31)
-            return 1;
+        if (roll < 36)
+            return 3;
         else if (roll < 51)
-            return 9;
+            return 7;
         else if (roll < 71)
-            return 0;
-        else if (roll < 91)
+            return 2;
+        else if (roll < 96)
             return -2;
         else if (roll < 101)
-            return -12;
+            return -9;
         else
             return 0;
     }

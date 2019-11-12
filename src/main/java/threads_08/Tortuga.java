@@ -12,7 +12,9 @@ public class Tortuga extends RacePlayer {
             return 3;
         else if (roll < 81)
             return 1;
-        else
+        else if (roll < 101)
             return -6;
+        else
+            return 0;
     }
 }

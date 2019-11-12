@@ -22,14 +22,16 @@ public abstract class RacePlayer extends Thread {
     @Override
     public void run() {
         while (!raceControl.isGameOver()) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            int roll = new Random().nextInt(99) + 1;
+            Random random = new Random();
+            int roll = random.nextInt(99) + 1;
+            //System.out.println(getPlayerName() + " rolls " + roll);
             int move = getClassMove(roll);
             raceControl.movePlayer(this, move);
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                //e.printStackTrace();
+            }
         }
 
 
