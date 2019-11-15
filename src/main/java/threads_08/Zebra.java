@@ -11,7 +11,7 @@ public class Zebra extends RacePlayer {
         if (roll < 26)
             return 3;
         else if (roll < 31)
-            return 7;
+            return 17;
         else if (roll < 56)
             return -2;
         else if (roll < 66)
