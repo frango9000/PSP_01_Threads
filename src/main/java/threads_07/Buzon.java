@@ -3,8 +3,12 @@ package threads_07;
 import java.util.Stack;
 
 public class Buzon {
+    //Contiene el contenedor de los correos y controla que no se ingresen correos si esta lleno,
+    // ni solicitudes de correos cuando esta vacio, dejandolos en espera y reactivandolos respectivamente
 
+    //el contenedor de correos
     private Stack<String> buzon;
+    //la capacidad maxima
     private int size;
 
     public Buzon(int size) {

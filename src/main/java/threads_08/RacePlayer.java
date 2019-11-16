@@ -19,6 +19,11 @@ public abstract class RacePlayer extends Thread {
         this.raceControl = raceControl;
     }
 
+    /*
+    verificamos si la carrera aun esta activa, creamos in random del 1 al 100 representando un 100% de probabilidad
+    cada implementacion de un race player debe procesar el random para retornar el valor del movimiento a realizar en el tablero
+    con el valor de movimiento le pedimos al controlador que nos mueva a la casilla correcta
+     */
     @Override
     public void run() {
         while (!raceControl.isGameOver()) {
@@ -37,5 +42,6 @@ public abstract class RacePlayer extends Thread {
 
     }
 
+    //metodo que debe ser implementado en las herederas
     protected abstract int getClassMove(int roll);
 }

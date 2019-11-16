@@ -27,6 +27,9 @@ package threads_08;
 import java.util.HashSet;
 import org.apache.commons.lang3.ArrayUtils;
 
+/*
+controlador de carreras, despues de crear la instancia agregamos los participantes
+ */
 public class RaceControl {
 
     private RacePlayer[] raceTrack;
@@ -48,19 +51,27 @@ public class RaceControl {
         racePlayer.setRaceControl(this);
     }
 
+    /*
+    movemos un participante de casilla
+     */
     public synchronized void movePlayer(RacePlayer movingPlayer, int moveSize) {
-
+        //todos comienzan fuera del tablero en pos -1
         int actualPos = -1;
+        //buscamos al jugador en el tablaero para encontrar su posicion actual (si esta en el tablero) y lo
+        // removemos para reposicionarlo
         if (ArrayUtils.contains(raceTrack, movingPlayer)) {
             actualPos            = ArrayUtils.indexOf(raceTrack, movingPlayer);
             raceTrack[actualPos] = null;
         }
+        //calculamos la nueva posicion verificando que no se salaga de los limites
         int newPos = Math.min((actualPos + moveSize), trackLength - 1);
         //System.out.println("Verificando movimiento de " + movingPlayer.getPlayerName() + " a la casilla " + newPos);
+        //verificamos si la casilla destino esta ocupada, si lo esta, verificamos la anterior, y asi hasta encontrar una disponible.
         while (newPos > -1 && raceTrack[newPos] != null) {
             newPos--;
             System.out.println("Casilla " + newPos + " ocupada, intentando la casilla anterior...");
         }
+        //verificamos la nueva posicion, q este dentro del tablero y verificamos si el jugador actual gana llegando a la casilla final
         if (newPos > -1) {
             System.out.println(movingPlayer.getPlayerName() + " se mueve (" + moveSize + ") de " + actualPos + " a " + newPos);
             gameOver          = newPos == trackLength - 1;
@@ -77,6 +88,9 @@ public class RaceControl {
         }
     }
 
+    /*
+    termina la carrera, imprimimos el resultado final y finalizamos los threads activos.
+     */
     public void endRace() {
         System.out.println("\nGAME OVER!\nFinaliza la carrera!, Ganador: " + raceTrack[trackLength - 1].getPlayerName());
         int rank = 1;
@@ -91,6 +105,7 @@ public class RaceControl {
         }
     }
 
+    //comienza la carrera
     public void startRace() {
         System.out.println("Comienza la carrera, " + players.size() + " participantes.");
         for (RacePlayer racePlayer : players) {
