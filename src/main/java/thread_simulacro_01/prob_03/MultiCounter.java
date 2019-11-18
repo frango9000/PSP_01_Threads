@@ -7,9 +7,9 @@ package thread_simulacro_01.prob_03;
 
 public class MultiCounter extends Thread {
 
-    //sw = 0 suma pares
-    //sw = 1 suma inpares
-    //sw = 2 suma terminaciones 2 y 3
+    //sw = 0 suma Mayusculas
+    //sw = 1 suma Minusculas
+    //sw = 2 suma Digitos
     private int sw = 0;
 
     private String text;

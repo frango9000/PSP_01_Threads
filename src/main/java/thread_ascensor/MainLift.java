@@ -14,7 +14,7 @@ public class MainLift {
             char n = scanner.next().charAt(0);
             int origen = scanner.nextInt();
             int destino = scanner.nextInt();
-            Pasajeros pasajeros = new Pasajeros(ascensorController, n, origen, destino);
+            Pasajero pasajeros = new Pasajero(ascensorController, n, origen, destino);
             pasajeros.start();
         }
 

@@ -6,6 +6,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import thread_ascensor.ui.FxDialogs;
+import thread_ascensor.ui.StaticHelpers;
+import thread_ascensor.ui.UIControl;
 
 public class MainFX extends Application {
 
@@ -27,18 +30,21 @@ public class MainFX extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        String string = "txt";
+        do {
+            string = FxDialogs.showTextInput("Iniciando", "Numero de Niveles", "15");
+        } while (!StaticHelpers.isInteger(string) || Integer.parseInt(string) < 0 || Integer.parseInt(string) > 50);
+        int niveles = Integer.parseInt(string);
         primaryStage.setMinWidth(600);
         primaryStage.setMinHeight(400);
         mainStage = primaryStage;
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/AscensorUI.fxml"));
         BorderPane root = loader.load();
-        UIControl control = loader.getController();
+        UIControl uiControl = loader.getController();
 
-        AscensorController ascensorController = new AscensorController();
-        ascensorController.setDisplay(control.getTxtarea());
-
-        control.setAscensorController(ascensorController);
+        AscensorController ascensorController = new AscensorController(niveles);
+        uiControl.setAscensorController(ascensorController);
 
         primaryStage.setScene(new Scene(root));
         primaryStage.show();

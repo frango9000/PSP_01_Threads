@@ -3,7 +3,7 @@ package thread_ascensor;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 
-class Ascensor extends Thread {
+public class Ascensor extends Thread {
 
     private char idName;
     private int nivel = 0;
@@ -13,7 +13,7 @@ class Ascensor extends Thread {
     private boolean bajando = false;
     private boolean isActive = true;
 
-    private Multimap<Integer, Pasajeros> pasajerosTransladandose;//llave niveldestino
+    private Multimap<Integer, Pasajero> pasajerosTransladandose;//llave niveldestino
 
     public Ascensor(AscensorController controller, char idName) {
         this.controller              = controller;
@@ -29,7 +29,15 @@ class Ascensor extends Thread {
         return nivel;
     }
 
-    public synchronized Multimap<Integer, Pasajeros> getPasajerosTransladandose() {
+    public boolean isSubiendo() {
+        return subiendo;
+    }
+
+    public boolean isBajando() {
+        return bajando;
+    }
+
+    public synchronized Multimap<Integer, Pasajero> getPasajerosTransladandose() {
         return pasajerosTransladandose;
     }
 
@@ -37,9 +45,10 @@ class Ascensor extends Thread {
     public void run() {
         while (true) {
             if (isActive) {
+                sendDataToUI();
                 controller.log("Ascensor " + idString());
                 if (subiendo || bajando) {
-                    AscensorController.waitFor(2);//delay: tiempo para cambiar de nivel
+                    AscensorController.waitFor(1);//delay: tiempo para cambiar de nivel
                     if (subiendo) {
                         nivel++;
                         subir();
@@ -56,6 +65,7 @@ class Ascensor extends Thread {
                             synchronized (this) {
                                 wait();
                                 controller.log("Ascensor " + idString() + " In:" + cantidadPasajeros() + " Out:" + "0");
+                                sendDataToUI();
                             }
                             controller.log("Ascensor " + idString() + " awake");
                         }
@@ -65,6 +75,11 @@ class Ascensor extends Thread {
                 }
             }
         }
+    }
+
+    private void sendDataToUI() {
+        if (controller.getUiControl() != null)
+            controller.getUiControl().setAscensorData(this);
     }
 
     //
@@ -116,14 +131,17 @@ class Ascensor extends Thread {
             });
 
             pasajerosTransladandose.entries().forEach((e) -> {
-                Pasajeros pasajeros = e.getValue();
+                Pasajero pasajeros = e.getValue();
                 synchronized (pasajeros) {
                     pasajeros.setNivelActual(nivel);
                     e.getValue().notify();
                 }
             });
             inOut = in + out;
-            AscensorController.waitFor(2 + in + out);//delay: 1 sec por cada pasajero entrando y saliendo
+            sendDataToUI();
+            AscensorController.waitFor(1);
+            AscensorController.waitFor(in + out);//delay: 1 sec por cada pasajero entrando y saliendo
+            sendDataToUI();
         }
         return inOut;
     }

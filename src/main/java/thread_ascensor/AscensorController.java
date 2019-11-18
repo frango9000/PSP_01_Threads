@@ -6,25 +6,37 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.Random;
 import javafx.scene.control.TextArea;
+import thread_ascensor.ui.UIControl;
 
 public class AscensorController {
 
     private int niveles = 15;
-    private Multimap<Integer, Pasajeros> pasajerosEsperando;
-    private Multimap<Integer, Pasajeros> pasajerosFinalizados;
+    private Multimap<Integer, Pasajero> pasajerosEsperando;
+    private Multimap<Integer, Pasajero> pasajerosFinalizados;
     private Ascensor ascensor;
     TextArea display;
 
+    UIControl uiControl;
 
-    public AscensorController() {
+
+    public AscensorController(int niveles) {
+        this.niveles         = niveles;
         pasajerosEsperando   = MultimapBuilder.SetMultimapBuilder.hashKeys(niveles).hashSetValues().build();
         pasajerosFinalizados = MultimapBuilder.SetMultimapBuilder.hashKeys(niveles).hashSetValues().build();
         ascensor             = new Ascensor(this, 'A');
         ascensor.start();
     }
 
+    public AscensorController() {
+        this(15);
+    }
+
     public void setDisplay(TextArea display) {
         this.display = display;
+    }
+
+    public void setUiControl(UIControl uiControl) {
+        this.uiControl = uiControl;
     }
 
     public synchronized void log(String log) {
@@ -36,18 +48,22 @@ public class AscensorController {
         }
     }
 
+    public UIControl getUiControl() {
+        return uiControl;
+    }
+
     public synchronized int getNiveles() {
         return niveles;
     }
 
-    public synchronized void addPasajeroEnEspera(Pasajeros pasajeros) {
+    public synchronized void addPasajeroEnEspera(Pasajero pasajeros) {
         pasajerosEsperando.put(pasajeros.getNivelActual(), pasajeros);
         synchronized (ascensor) {
             ascensor.notify();
         }
     }
 
-    public synchronized void removePasajeroEnEspera(Pasajeros pasajeros) {
+    public synchronized void removePasajeroEnEspera(Pasajero pasajeros) {
         pasajerosEsperando.remove(pasajeros.getNivelActual(), pasajeros);
     }
 
@@ -55,11 +71,11 @@ public class AscensorController {
         return pasajerosEsperando.containsKey(nivel) && !pasajerosEsperando.get(nivel).isEmpty();
     }
 
-    public synchronized Collection<Pasajeros> getPasajerosEsperando(int nivel) {
+    public synchronized Collection<Pasajero> getPasajerosEsperando(int nivel) {
         return pasajerosEsperando.get(nivel);
     }
 
-    public synchronized void depositPasajeroFinalizado(Pasajeros pasajeros) {
+    public synchronized void depositPasajeroFinalizado(Pasajero pasajeros) {
         pasajerosFinalizados.put(pasajeros.getNivelActual(), pasajeros);
     }
 

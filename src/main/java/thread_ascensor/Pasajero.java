@@ -1,17 +1,15 @@
 package thread_ascensor;
 
-public class Pasajeros extends Thread {
+public class Pasajero extends Thread {
 
+    private final int nivelDestino;
+    char idName;
     private AscensorController controller;
     private Ascensor ascensorEnUso;
     private int nivelActual;
-    private final int nivelDestino;
 
 
-    char idName;
-
-
-    public Pasajeros(AscensorController controller, char idName, int nivelActual, int nivelDestino) {
+    public Pasajero(AscensorController controller, char idName, int nivelActual, int nivelDestino) {
         this.idName       = idName;
         this.controller   = controller;
         this.nivelActual  = nivelActual;
@@ -54,6 +52,7 @@ public class Pasajeros extends Thread {
     @Override
     public void run() {
         controller.log("Pasajero " + idString() + " solicitando viaje");
+        controller.getUiControl().getNivelesControl().addPasajeroNivelIn(nivelActual, this);
         controller.addPasajeroEnEspera(this);
         while (!controller.isAscensorDisponible(nivelActual)) {
             try {
@@ -64,6 +63,7 @@ public class Pasajeros extends Thread {
                 e.printStackTrace();
             }
         }
+        controller.getUiControl().getNivelesControl().removePasajeroNivelIn(nivelActual, this);
         controller.removePasajeroEnEspera(this);
         setAscensorEnUso(controller.getAscensor(nivelActual).get());
         controller.log("Pasajero " + idString() + " entrando en el ascensor " + ascensorEnUso.getIdName());
@@ -76,8 +76,9 @@ public class Pasajeros extends Thread {
                 e.printStackTrace();
             }
         }
-        controller.log("Pasajero " + idString() + " saliendo en el piso " + nivelActual + "/" + nivelDestino);
+
         setAscensorEnUso(null);
+        controller.getUiControl().getNivelesControl().addPasajeroNivelOut(nivelActual, this);
         controller.depositPasajeroFinalizado(this);
     }
 
