@@ -1,0 +1,33 @@
+PROBLEMA 1
+
+1.A. Programa en java que crea tres hilos y los ejecuta. Los hilos escriben 8 veces el número de iteración
+del bucle y su nombre. En cada iteración, después de escribir su nombre, se bloquean durante un tiempo
+aleatorio de segundos y después vuelven a estar disponibles para su ejecución. El programa principal no
+terminará hasta que hayan terminado los tres hilos. (1,5 puntos)
+
+1.B. Modifica el programa del apartado A para que los hilos se comporten de forma secuencial, (espera a
+que el tercer hilo acabe para que se ejecute el segundo y a su vez, que el segundo acabe para que se
+ejecute el primero) y termina por último el programa principal. (1 punto)
+
+1.C. Modifica el programa del apartado A para que después de cada iteración, después de escribir su
+nombre, dejen paso al otro hilo. (0,5 puntos)
+
+
+PROBLEMA 2
+Programa en java que ejecute 3 hilos de forma concurrente. El primer hilo contará las vocales que hay en
+un determinado texto (introducido por teclado), el segundo, las consonantes; el tercero suma el total de
+letras a partir de las cantidades obtenidas en el primer y el segundo hilo. El programa principal no
+terminará hasta que hayan terminado los cuatro hilos. (2 puntos)
+
+
+PROBLEMA 3
+Crea una clase Java que utilice 3 hilos para contar el número de mayúsculas, minúsculas o números que
+hay en un determinado texto (que puede ser introducido por teclado o estar en un fichero). Cada hilo se
+encargará de contar una condición diferente, actualizando todos los hilos una misma variable común que
+representa el número de ocurrencias totales encontradas. (3 puntos)
+
+
+PROBLEMA 4
+Crea tu propia versión productor-consumidor con el ejemplo que estimes oportuno. Cuanto más complejo
+sea el ejemplo, mayor puntuación tendrás (múltiples productores y consumidores, buffer de tamaño mayor
+que 1...). No vale calcar los ejemplos que hicimos en clase! (2 puntos)
