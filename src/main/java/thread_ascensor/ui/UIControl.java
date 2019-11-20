@@ -24,74 +24,53 @@ import thread_ascensor.Pasajero;
 public class UIControl {
 
 
-    private ObservableList<Pasajero> pasajerosEnAscensor0 = FXCollections.observableArrayList();
+    @FXML
+    public Button loopGo;
+    @FXML
+    public TextField loopNum;
     SimpleStringProperty propAscNombre = new SimpleStringProperty();
     SimpleIntegerProperty propAscNivel = new SimpleIntegerProperty(0);
     SimpleStringProperty propAscDireccion = new SimpleStringProperty();
     SimpleIntegerProperty propAscCantidadPasajeros = new SimpleIntegerProperty();
-
-
     UINivelesControl nivelesControl;
-
+    AscensorController ascensorController;
+    private ObservableList<Pasajero> pasajerosEnAscensor0 = FXCollections.observableArrayList();
     @FXML
     private ResourceBundle resources;
-
     @FXML
     private URL location;
-
     @FXML
     private Label lbl;
-
     @FXML
     private TextField tfNombre;
-
     @FXML
     private Label lbl1;
-
     @FXML
     private TextField tfOrigen;
-
     @FXML
     private Label lbl11;
-
     @FXML
     private TextField tfDestino;
-
     @FXML
     private Button btn;
-
     @FXML
     private TextArea txtarea;
-
     @FXML
     private VBox mainPane;
-
     @FXML
     private GridPane gridAscensores;
-
     @FXML
     private Label numAscensor;
-
     @FXML
     private Label nombreAscensor;
-
     @FXML
     private Label nivelActual;
-
     @FXML
     private Label numPasajeros;
-
     @FXML
     private ListView<Pasajero> listViewAscensor;
-
     @FXML
     private Label direccionAscensor;
-
-    @FXML
-    public Button loopGo;
-
-    @FXML
-    public TextField loopNum;
 
     @FXML
     void initialize() {
@@ -122,8 +101,6 @@ public class UIControl {
 
     }
 
-    AscensorController ascensorController;
-
     public TextArea getTxtarea() {
         return txtarea;
     }
@@ -147,8 +124,6 @@ public class UIControl {
                 setPropAscDireccion((ascensor.isSubiendo() ? "{up}" : ascensor.isBajando() ? "{down}" : "{stop}"));
                 setPropAscNivel(ascensor.getNivel());
                 nivelesControl.activateRadio(ascensor.getNivel());
-                pasajerosEnAscensor0.clear();
-                ascensor.getPasajerosTransladandose().forEach((k, v) -> pasajerosEnAscensor0.add(v));
             }
         });
 

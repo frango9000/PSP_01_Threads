@@ -10,13 +10,12 @@ import thread_ascensor.ui.UIControl;
 
 public class AscensorController {
 
+    TextArea display;
+    UIControl uiControl;
     private int niveles = 15;
     private Multimap<Integer, Pasajero> pasajerosEsperando;
     private Multimap<Integer, Pasajero> pasajerosFinalizados;
     private Ascensor ascensor;
-    TextArea display;
-
-    UIControl uiControl;
 
 
     public AscensorController(int niveles) {
@@ -31,12 +30,21 @@ public class AscensorController {
         this(15);
     }
 
-    public void setDisplay(TextArea display) {
-        this.display = display;
+    public static void waitFor(int seconds) {
+        waitForMs(seconds * 1000);
     }
 
-    public void setUiControl(UIControl uiControl) {
-        this.uiControl = uiControl;
+    public static void waitForMs(int ms) {
+        int rand = new Random().nextInt(ms / 10);//possible +10% rand delay
+        try {
+            Thread.sleep(ms + rand);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setDisplay(TextArea display) {
+        this.display = display;
     }
 
     public synchronized void log(String log) {
@@ -50,6 +58,10 @@ public class AscensorController {
 
     public UIControl getUiControl() {
         return uiControl;
+    }
+
+    public void setUiControl(UIControl uiControl) {
+        this.uiControl = uiControl;
     }
 
     public synchronized int getNiveles() {
@@ -89,21 +101,6 @@ public class AscensorController {
         else
             return Optional.empty();
     }
-
-
-    public static void waitFor(int seconds) {
-        waitForMs(seconds * 1000);
-    }
-
-    public static void waitForMs(int ms) {
-        int rand = new Random().nextInt(ms / 10);//possible +10% rand delay
-        try {
-            Thread.sleep(ms + rand);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     public synchronized boolean getContinuarSubiendo(Ascensor ascensor) {
         return pasajerosEsperando.entries().stream().anyMatch(e -> e.getValue().getNivelActual() > ascensor.getNivel());

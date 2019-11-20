@@ -26,11 +26,15 @@ public class Pasajero extends Thread {
     }
 
     public void setAscensorEnUso(Ascensor ascensorEnUso) {
-        if (this.ascensorEnUso != null)
+        if (this.ascensorEnUso != null) {
             this.ascensorEnUso.getPasajerosTransladandose().get(getNivelDestino()).remove(this);
+            controller.getUiControl().removePasajeroEnAscensor0(this);
+        }
         this.ascensorEnUso = ascensorEnUso;
-        if (ascensorEnUso != null)
+        if (ascensorEnUso != null) {
             ascensorEnUso.getPasajerosTransladandose().put(getNivelDestino(), this);
+            controller.getUiControl().addPasajeroEnAscensor0(this);
+        }
     }
 
     public int getNivelActual() {

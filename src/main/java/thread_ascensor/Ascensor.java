@@ -82,41 +82,6 @@ public class Ascensor extends Thread {
             controller.getUiControl().setAscensorData(this);
     }
 
-    //
-//    private int carga(){
-//        int in = 0;
-//        if(controller.isSolicitando(nivel)){
-//            in = controller.getPasajerosEsperando(nivel).size();
-//            controller.getPasajerosEsperando(nivel).forEach(pasajero -> {
-//                synchronized (pasajero) {
-//                    pasajero.notify();
-//                }
-//            });
-//        }
-//        return in;
-//    }
-//
-//    private int descarga(){
-//        int out = 0;
-//        if(!pasajerosTransladandose.get(nivel).isEmpty()) {
-//            out = pasajerosTransladandose.get(nivel).size();
-//            pasajerosTransladandose.entries().forEach((e) -> {
-//                Pasajeros pasajeros = e.getValue();
-//                synchronized (pasajeros) {
-//                    pasajeros.setNivelActual(nivel);
-//                    pasajeros.notify();
-//                }
-//            });
-//        }
-//        return out;
-//    }
-//    private int cargaDescarga() {
-//        int in = carga();
-//        int out = descarga();
-//        if(in+out>0)
-//            controller.log("Ascensor " + idString() + " In:" + in + " Out:" + out);
-//        return in + out;
-//    }
     private int cargaDescarga() {
         int inOut = 0;
         if (controller.isSolicitando(nivel) || !pasajerosTransladandose.get(nivel).isEmpty()) {

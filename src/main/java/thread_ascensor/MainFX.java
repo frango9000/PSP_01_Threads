@@ -6,8 +6,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import thread_ascensor.ui.FxDialogs;
-import thread_ascensor.ui.StaticHelpers;
 import thread_ascensor.ui.UIControl;
 
 public class MainFX extends Application {
@@ -30,11 +28,11 @@ public class MainFX extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        String string = "txt";
-        do {
-            string = FxDialogs.showTextInput("Iniciando", "Numero de Niveles", "15");
-        } while (!StaticHelpers.isInteger(string) || Integer.parseInt(string) < 0 || Integer.parseInt(string) > 50);
-        int niveles = Integer.parseInt(string);
+//        String string = "txt";
+//        do {
+//            string = FxDialogs.showTextInput("Iniciando", "Numero de Niveles", "15");
+//        } while (!StaticHelpers.isInteger(string) || Integer.parseInt(string) < 0 || Integer.parseInt(string) > 50);
+        int niveles = Integer.parseInt("10");
         primaryStage.setMinWidth(600);
         primaryStage.setMinHeight(400);
         mainStage = primaryStage;
