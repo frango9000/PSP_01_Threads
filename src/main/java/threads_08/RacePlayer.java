@@ -38,8 +38,6 @@ public abstract class RacePlayer extends Thread {
                 //e.printStackTrace();
             }
         }
-
-
     }
 
     //metodo que debe ser implementado en las herederas

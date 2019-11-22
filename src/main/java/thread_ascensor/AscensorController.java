@@ -8,26 +8,144 @@ import java.util.Random;
 import javafx.scene.control.TextArea;
 import thread_ascensor.ui.UIControl;
 
+/**
+ * clase que controla el sistema de ascensores, niveles y pasajeros, representa la interfaz con la que el usuario
+ * interactua cuando va a iniciar un viaje y llama al ascensor desde un nivel con la intencion de ir a otro nivel
+ */
 public class AscensorController {
 
-    TextArea display;
-    UIControl uiControl;
-    private int niveles = 15;
-    private Multimap<Integer, Pasajero> pasajerosEsperando;
-    private Multimap<Integer, Pasajero> pasajerosFinalizados;
-    private Ascensor ascensor;
+
+    private UIControl uiControl;                            //referencia a la interfaz para enviar los cambios
+    private int nivelTop = 15;                              //nivel maximo del ascensor ( 0 = PB ) total =  nivelTop + 1
+    private Multimap<Integer, Pasajero> pasajerosEsperando;     //mapa de pasajeros esperando por piso
+    private Multimap<Integer, Pasajero> pasajerosFinalizados;   //mapa de pasajeros que finalizaron el viaje
+    private Ascensor ascensor;                              //ascensor unico TODO: multiples ascensores
 
 
-    public AscensorController(int niveles) {
-        this.niveles         = niveles;
-        pasajerosEsperando   = MultimapBuilder.SetMultimapBuilder.hashKeys(niveles).hashSetValues().build();
-        pasajerosFinalizados = MultimapBuilder.SetMultimapBuilder.hashKeys(niveles).hashSetValues().build();
+    public AscensorController(int nivelTop) {
+        this.nivelTop        = nivelTop;
+        pasajerosEsperando   = MultimapBuilder.SetMultimapBuilder.hashKeys(nivelTop).hashSetValues().build();
+        pasajerosFinalizados = MultimapBuilder.SetMultimapBuilder.hashKeys(nivelTop).hashSetValues().build();
         ascensor             = new Ascensor(this, 'A');
         ascensor.start();
     }
 
     public AscensorController() {
         this(15);
+    }
+
+    public UIControl getUiControl() {
+        return uiControl;
+    }
+
+    public void setUiControl(UIControl uiControl) {
+        this.uiControl = uiControl;
+    }
+
+    public synchronized int getNivelTop() {
+        return nivelTop;
+    }
+
+    /**
+     * enviar mensajes a consola y, si existe, al area text de la UI
+     *
+     * @param log
+     */
+    public synchronized void log(String log) {
+        System.out.println(log);
+        TextArea display = uiControl.getTxtarea();
+        if (display != null) {
+            synchronized (display) {
+                display.appendText(log + "\n");
+            }
+        }
+    }
+
+    /**
+     * un pasajero llama al ascensor desde un nivel de origen
+     * lo agregamos a la cola de espera de su nivel y notificamos
+     * al ascensor para que se active si esta en wait()
+     * @param pasajeros
+     */
+    public synchronized void addPasajeroEnEspera(Pasajero pasajeros) {
+        pasajerosEsperando.put(pasajeros.getNivelActual(), pasajeros);
+        synchronized (ascensor) {
+            ascensor.notify();
+        }
+    }
+
+    /**
+     *
+     * @param pasajeros el pasajero que sale de la cola de espera ( luego entrara al ascensor por su cuenta)
+     */
+    public synchronized void removePasajeroEnEspera(Pasajero pasajeros) {
+        pasajerosEsperando.remove(pasajeros.getNivelActual(), pasajeros);
+    }
+
+
+    /**
+     * verifica si hay algun pasajero solicitando desde el nivel indicado
+     * @param nivel
+     * @return
+     */
+    public synchronized boolean isSolicitando(int nivel) {
+        return pasajerosEsperando.containsKey(nivel) && !pasajerosEsperando.get(nivel).isEmpty();
+    }
+
+    /**
+     * obtiene la lista de pasajeros esperando en in nivel
+     * @param nivel
+     * @return
+     */
+    public synchronized Collection<Pasajero> getPasajerosEsperando(int nivel) {
+        return pasajerosEsperando.get(nivel);
+    }
+
+    /**
+     * entregar un pasajero a el mapa de viajes finalizados
+     * @param pasajeros
+     */
+    public synchronized void depositPasajeroFinalizado(Pasajero pasajeros) {
+        pasajerosFinalizados.put(pasajeros.getNivelActual(), pasajeros);
+    }
+
+    /**
+     * verifica si hay algun ascensor en el nivel indicado
+     * @param nivel
+     * @return
+     */
+    public synchronized boolean isAscensorDisponible(int nivel) {
+        return ascensor.getNivel() == nivel;
+    }
+
+    /**
+     * retorna el ascensor que se encuentra en el nivel indicado
+     * @param nivel
+     * @return
+     */
+    public synchronized Optional<Ascensor> getAscensor(int nivel) {
+        if (ascensor.getNivel() == nivel)
+            return Optional.of(ascensor);
+        else
+            return Optional.empty();
+    }
+
+    /**
+     * true si hay pasajeros esperando en los niveles superiores al ascensor
+     * @param ascensor
+     * @return
+     */
+    public synchronized boolean getContinuarSubiendo(Ascensor ascensor) {
+        return pasajerosEsperando.entries().stream().anyMatch(e -> e.getValue().getNivelActual() > ascensor.getNivel());
+    }
+
+    /**
+     * true si hay pasajeros esperando en los niveles inferiores al ascensor
+     * @param ascensor
+     * @return
+     */
+    public synchronized boolean getContinuarBajando(Ascensor ascensor) {
+        return pasajerosEsperando.entries().stream().anyMatch(e -> e.getValue().getNivelActual() < ascensor.getNivel());
     }
 
     public static void waitFor(int seconds) {
@@ -41,72 +159,5 @@ public class AscensorController {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
-
-    public void setDisplay(TextArea display) {
-        this.display = display;
-    }
-
-    public synchronized void log(String log) {
-        System.out.println(log);
-        if (display != null) {
-            synchronized (display) {
-                display.appendText(log + "\n");
-            }
-        }
-    }
-
-    public UIControl getUiControl() {
-        return uiControl;
-    }
-
-    public void setUiControl(UIControl uiControl) {
-        this.uiControl = uiControl;
-    }
-
-    public synchronized int getNiveles() {
-        return niveles;
-    }
-
-    public synchronized void addPasajeroEnEspera(Pasajero pasajeros) {
-        pasajerosEsperando.put(pasajeros.getNivelActual(), pasajeros);
-        synchronized (ascensor) {
-            ascensor.notify();
-        }
-    }
-
-    public synchronized void removePasajeroEnEspera(Pasajero pasajeros) {
-        pasajerosEsperando.remove(pasajeros.getNivelActual(), pasajeros);
-    }
-
-    public synchronized boolean isSolicitando(int nivel) {
-        return pasajerosEsperando.containsKey(nivel) && !pasajerosEsperando.get(nivel).isEmpty();
-    }
-
-    public synchronized Collection<Pasajero> getPasajerosEsperando(int nivel) {
-        return pasajerosEsperando.get(nivel);
-    }
-
-    public synchronized void depositPasajeroFinalizado(Pasajero pasajeros) {
-        pasajerosFinalizados.put(pasajeros.getNivelActual(), pasajeros);
-    }
-
-    public synchronized boolean isAscensorDisponible(int nivel) {
-        return ascensor.getNivel() == nivel;
-    }
-
-    public synchronized Optional<Ascensor> getAscensor(int nivel) {
-        if (ascensor.getNivel() == nivel)
-            return Optional.of(ascensor);
-        else
-            return Optional.empty();
-    }
-
-    public synchronized boolean getContinuarSubiendo(Ascensor ascensor) {
-        return pasajerosEsperando.entries().stream().anyMatch(e -> e.getValue().getNivelActual() > ascensor.getNivel());
-    }
-
-    public synchronized boolean getContinuarBajando(Ascensor ascensor) {
-        return pasajerosEsperando.entries().stream().anyMatch(e -> e.getValue().getNivelActual() < ascensor.getNivel());
     }
 }

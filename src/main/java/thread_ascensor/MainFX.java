@@ -32,7 +32,7 @@ public class MainFX extends Application {
 //        do {
 //            string = FxDialogs.showTextInput("Iniciando", "Numero de Niveles", "15");
 //        } while (!StaticHelpers.isInteger(string) || Integer.parseInt(string) < 0 || Integer.parseInt(string) > 50);
-        int niveles = Integer.parseInt("10");
+        int niveles = 10;
         primaryStage.setMinWidth(600);
         primaryStage.setMinHeight(400);
         mainStage = primaryStage;

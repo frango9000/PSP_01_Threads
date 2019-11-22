@@ -108,7 +108,7 @@ public class UIControl {
 
     public void setAscensorController(AscensorController ascensorController) {
         this.ascensorController = ascensorController;
-        nivelesControl          = new UINivelesControl(ascensorController.getNiveles());
+        nivelesControl          = new UINivelesControl(ascensorController.getNivelTop());
         mainPane.getChildren().add(nivelesControl.getPane());
         ascensorController.setDisplay(getTxtarea());
         ascensorController.setUiControl(this);
@@ -182,7 +182,7 @@ public class UIControl {
             int num = Integer.parseInt(numstr);
             num = Math.min(num, 'Z' - 'A' + 1);
             for (int i = 0; i < num; i++) {
-                int niveles = ascensorController.getNiveles();
+                int niveles = ascensorController.getNivelTop();
                 Random random = new Random();
                 int origen = random.nextInt(niveles + 1);
                 int destino = random.nextInt(niveles + 1);

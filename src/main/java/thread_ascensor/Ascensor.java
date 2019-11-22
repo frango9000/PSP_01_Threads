@@ -11,14 +11,13 @@ public class Ascensor extends Thread {
 
     private boolean subiendo = false;
     private boolean bajando = false;
-    private boolean isActive = true;
 
     private Multimap<Integer, Pasajero> pasajerosTransladandose;//llave niveldestino
 
     public Ascensor(AscensorController controller, char idName) {
         this.controller              = controller;
         this.idName                  = idName;
-        this.pasajerosTransladandose = MultimapBuilder.SetMultimapBuilder.hashKeys(controller.getNiveles()).hashSetValues().build();
+        this.pasajerosTransladandose = MultimapBuilder.SetMultimapBuilder.hashKeys(controller.getNivelTop()).hashSetValues().build();
     }
 
     public char getIdName() {
@@ -41,39 +40,39 @@ public class Ascensor extends Thread {
         return pasajerosTransladandose;
     }
 
+
     @Override
     public void run() {
         while (true) {
-            if (isActive) {
-                sendDataToUI();
-                controller.log("Ascensor " + idString());
-                if (subiendo || bajando) {
-                    AscensorController.waitFor(1);//delay: tiempo para cambiar de nivel
-                    if (subiendo) {
-                        nivel++;
-                        subir();
-                    }
-                    if (bajando) {
-                        nivel--;
-                        bajar();
-                    }
-                    cargaDescarga();
-                } else {
-                    try {
-                        if (!subir() && !bajar() && cargaDescarga() == 0) {
-                            controller.log("Ascensor " + idString() + " sleep");
-                            synchronized (this) {
-                                wait();
-                                controller.log("Ascensor " + idString() + " In:" + cantidadPasajeros() + " Out:" + "0");
-                                sendDataToUI();
-                            }
-                            controller.log("Ascensor " + idString() + " awake");
+            sendDataToUI();
+            controller.log("Ascensor " + idString());
+            if (subiendo || bajando) {
+                AscensorController.waitFor(1);//delay: tiempo para cambiar de nivel
+                if (subiendo) {
+                    nivel++;
+                    subir();
+                }
+                if (bajando) {
+                    nivel--;
+                    bajar();
+                }
+                cargaDescarga();
+            } else {
+                try {
+                    if (!subir() && !bajar() && cargaDescarga() == 0) {
+                        controller.log("Ascensor " + idString() + " sleep");
+                        synchronized (this) {
+                            wait();
+                            controller.log("Ascensor " + idString() + " In:" + cantidadPasajeros() + " Out:" + "0");
+                            sendDataToUI();
                         }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        controller.log("Ascensor " + idString() + " awake");
                     }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
+
         }
     }
 
@@ -82,6 +81,12 @@ public class Ascensor extends Thread {
             controller.getUiControl().setAscensorData(this);
     }
 
+    /**
+     * el ascensor llega a un nivel y carga los pasajeros esperando en ese nivel y descarga los pasajeros que se dirigen
+     * a ese nivel y esperamos 2 segundos + 1 segundo por cada movimiento de pasajero
+     *
+     * @return la cantidad de pasajeros que bajan + pasajeros que suben
+     */
     private int cargaDescarga() {
         int inOut = 0;
         if (controller.isSolicitando(nivel) || !pasajerosTransladandose.get(nivel).isEmpty()) {
@@ -111,12 +116,22 @@ public class Ascensor extends Thread {
         return inOut;
     }
 
+    /**
+     *
+     * @return true si el ascensor necesita subir ( hay pasajeros esperando en los niveles superiores o
+     *          hay pasajeros dentro que se dirijan a los niveles superiores
+     */
     private boolean subir() {
         boolean necesidadAscendenciaLocal = pasajerosTransladandose.entries().stream().anyMatch((e) -> e.getValue().getNivelDestino() > nivel);
         boolean necesidadAscendenciaGlobal = controller.getContinuarSubiendo(this);
-        return subiendo = (necesidadAscendenciaGlobal || necesidadAscendenciaLocal) && nivel < controller.getNiveles();
+        return subiendo = (necesidadAscendenciaGlobal || necesidadAscendenciaLocal) && nivel < controller.getNivelTop();
     }
 
+    /**
+     *
+     * @return true si el ascensor necesita bajar ( hay pasajeros esperando en los niveles inferiores o
+     *          hay pasajeros dentro que se dirijan a los niveles inferiores
+     */
     private boolean bajar() {
         boolean necesidadDescendenciaLocal = pasajerosTransladandose.entries().stream().anyMatch((e) -> e.getValue().getNivelDestino() < nivel);
         boolean necesidadDescendenciaGlobal = controller.getContinuarBajando(this);
@@ -124,9 +139,13 @@ public class Ascensor extends Thread {
     }
 
     private String idString() {
-        return "[" + idName + "] (" + nivel + "/" + controller.getNiveles() + ") <" + cantidadPasajeros() + "> " + (subiendo ? "{up}" : bajando ? "{down}" : "{stop}");
+        return "[" + idName + "] (" + nivel + "/" + controller.getNivelTop() + ") <" + cantidadPasajeros() + "> " + (subiendo ? "{up}" : bajando ? "{down}" : "{stop}");
     }
 
+    /**
+     *
+     * @return int, cantidad de pasajeros dentro del ascensor
+     */
     private int cantidadPasajeros() {
         return pasajerosTransladandose.entries().size();
     }
