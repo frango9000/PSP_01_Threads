@@ -89,9 +89,9 @@ public class Ascensor extends Thread {
      */
     private int cargaDescarga() {
         int inOut = 0;
-        if (controller.isSolicitando(nivel) || !pasajerosTransladandose.get(nivel).isEmpty()) {
+        if (controller.isSolicitando(nivel) || !getPasajerosTransladandose().get(nivel).isEmpty()) {
             int in = controller.getPasajerosEsperando(nivel).size();
-            int out = pasajerosTransladandose.get(nivel).size();
+            int out = getPasajerosTransladandose().get(nivel).size();
             controller.log("Ascensor " + idString() + " In:" + in + " Out:" + out);
 
             controller.getPasajerosEsperando(nivel).forEach(pasajero -> {
@@ -100,7 +100,7 @@ public class Ascensor extends Thread {
                 }
             });
 
-            pasajerosTransladandose.entries().forEach((e) -> {
+            getPasajerosTransladandose().entries().forEach((e) -> {
                 Pasajero pasajeros = e.getValue();
                 synchronized (pasajeros) {
                     pasajeros.setNivelActual(nivel);
@@ -122,7 +122,7 @@ public class Ascensor extends Thread {
      *          hay pasajeros dentro que se dirijan a los niveles superiores
      */
     private boolean subir() {
-        boolean necesidadAscendenciaLocal = pasajerosTransladandose.entries().stream().anyMatch((e) -> e.getValue().getNivelDestino() > nivel);
+        boolean necesidadAscendenciaLocal = getPasajerosTransladandose().entries().stream().anyMatch((e) -> e.getValue().getNivelDestino() > nivel);
         boolean necesidadAscendenciaGlobal = controller.getContinuarSubiendo(this);
         return subiendo = (necesidadAscendenciaGlobal || necesidadAscendenciaLocal) && nivel < controller.getNivelTop();
     }
@@ -133,7 +133,7 @@ public class Ascensor extends Thread {
      *          hay pasajeros dentro que se dirijan a los niveles inferiores
      */
     private boolean bajar() {
-        boolean necesidadDescendenciaLocal = pasajerosTransladandose.entries().stream().anyMatch((e) -> e.getValue().getNivelDestino() < nivel);
+        boolean necesidadDescendenciaLocal = getPasajerosTransladandose().entries().stream().anyMatch((e) -> e.getValue().getNivelDestino() < nivel);
         boolean necesidadDescendenciaGlobal = controller.getContinuarBajando(this);
         return bajando = (necesidadDescendenciaLocal || necesidadDescendenciaGlobal) && (nivel > 0);
     }
@@ -147,7 +147,7 @@ public class Ascensor extends Thread {
      * @return int, cantidad de pasajeros dentro del ascensor
      */
     private int cantidadPasajeros() {
-        return pasajerosTransladandose.entries().size();
+        return getPasajerosTransladandose().entries().size();
     }
 
 }

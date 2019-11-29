@@ -22,19 +22,24 @@ public class AscensorController {
     private Ascensor ascensor;                              //ascensor unico TODO: multiples ascensores
 
 
-    public AscensorController(int nivelTop) {
+    public AscensorController(UIControl uiControl, int nivelTop) {
+        this.uiControl       = uiControl;
         this.nivelTop        = nivelTop;
         pasajerosEsperando   = MultimapBuilder.SetMultimapBuilder.hashKeys(nivelTop).hashSetValues().build();
         pasajerosFinalizados = MultimapBuilder.SetMultimapBuilder.hashKeys(nivelTop).hashSetValues().build();
         ascensor             = new Ascensor(this, 'A');
+    }
+
+    public void init() {
         ascensor.start();
     }
 
-    public AscensorController() {
-        this(15);
+    public AscensorController(UIControl uiControl) {
+        this(uiControl, 15);
     }
 
-    public UIControl getUiControl() {
+
+    public synchronized UIControl getUiControl() {
         return uiControl;
     }
 
@@ -68,7 +73,7 @@ public class AscensorController {
      * @param pasajeros
      */
     public synchronized void addPasajeroEnEspera(Pasajero pasajeros) {
-        pasajerosEsperando.put(pasajeros.getNivelActual(), pasajeros);
+        getPasajerosEsperando().put(pasajeros.getNivelActual(), pasajeros);
         synchronized (ascensor) {
             ascensor.notify();
         }
@@ -79,7 +84,7 @@ public class AscensorController {
      * @param pasajeros el pasajero que sale de la cola de espera ( luego entrara al ascensor por su cuenta)
      */
     public synchronized void removePasajeroEnEspera(Pasajero pasajeros) {
-        pasajerosEsperando.remove(pasajeros.getNivelActual(), pasajeros);
+        getPasajerosEsperando().remove(pasajeros.getNivelActual(), pasajeros);
     }
 
 
@@ -89,7 +94,7 @@ public class AscensorController {
      * @return
      */
     public synchronized boolean isSolicitando(int nivel) {
-        return pasajerosEsperando.containsKey(nivel) && !pasajerosEsperando.get(nivel).isEmpty();
+        return getPasajerosEsperando().containsKey(nivel) && !pasajerosEsperando.get(nivel).isEmpty();
     }
 
     /**
@@ -98,7 +103,7 @@ public class AscensorController {
      * @return
      */
     public synchronized Collection<Pasajero> getPasajerosEsperando(int nivel) {
-        return pasajerosEsperando.get(nivel);
+        return getPasajerosEsperando().get(nivel);
     }
 
     /**
@@ -106,7 +111,7 @@ public class AscensorController {
      * @param pasajeros
      */
     public synchronized void depositPasajeroFinalizado(Pasajero pasajeros) {
-        pasajerosFinalizados.put(pasajeros.getNivelActual(), pasajeros);
+        getPasajerosFinalizados().put(pasajeros.getNivelActual(), pasajeros);
     }
 
     /**
@@ -136,7 +141,7 @@ public class AscensorController {
      * @return
      */
     public synchronized boolean getContinuarSubiendo(Ascensor ascensor) {
-        return pasajerosEsperando.entries().stream().anyMatch(e -> e.getValue().getNivelActual() > ascensor.getNivel());
+        return getPasajerosEsperando().entries().stream().anyMatch(e -> e.getValue().getNivelActual() > ascensor.getNivel());
     }
 
     /**
@@ -145,7 +150,7 @@ public class AscensorController {
      * @return
      */
     public synchronized boolean getContinuarBajando(Ascensor ascensor) {
-        return pasajerosEsperando.entries().stream().anyMatch(e -> e.getValue().getNivelActual() < ascensor.getNivel());
+        return getPasajerosEsperando().entries().stream().anyMatch(e -> e.getValue().getNivelActual() < ascensor.getNivel());
     }
 
     public static void waitFor(int seconds) {
@@ -159,5 +164,17 @@ public class AscensorController {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public synchronized Multimap<Integer, Pasajero> getPasajerosEsperando() {
+        return pasajerosEsperando;
+    }
+
+    public synchronized Multimap<Integer, Pasajero> getPasajerosFinalizados() {
+        return pasajerosFinalizados;
+    }
+
+    public synchronized Ascensor getAscensor() {
+        return ascensor;
     }
 }

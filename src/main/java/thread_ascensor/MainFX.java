@@ -32,7 +32,7 @@ public class MainFX extends Application {
 //        do {
 //            string = FxDialogs.showTextInput("Iniciando", "Numero de Niveles", "15");
 //        } while (!StaticHelpers.isInteger(string) || Integer.parseInt(string) < 0 || Integer.parseInt(string) > 50);
-        int niveles = 10;
+        int niveles = 20;
         primaryStage.setMinWidth(600);
         primaryStage.setMinHeight(400);
         mainStage = primaryStage;
@@ -41,8 +41,9 @@ public class MainFX extends Application {
         BorderPane root = loader.load();
         UIControl uiControl = loader.getController();
 
-        AscensorController ascensorController = new AscensorController(niveles);
+        AscensorController ascensorController = new AscensorController(uiControl, niveles);
         uiControl.setAscensorController(ascensorController);
+        ascensorController.init();
 
         primaryStage.setScene(new Scene(root));
         primaryStage.show();

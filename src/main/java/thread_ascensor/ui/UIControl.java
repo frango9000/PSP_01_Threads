@@ -110,7 +110,6 @@ public class UIControl {
         this.ascensorController = ascensorController;
         nivelesControl          = new UINivelesControl(ascensorController.getNivelTop());
         mainPane.getChildren().add(nivelesControl.getPane());
-        ascensorController.setDisplay(getTxtarea());
         ascensorController.setUiControl(this);
     }
 

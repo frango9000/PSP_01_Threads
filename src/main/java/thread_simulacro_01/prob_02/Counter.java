@@ -1,4 +1,4 @@
-package thread_simulacro_01.Prob_02;
+package thread_simulacro_01.prob_02;
 
 
 import java.util.Scanner;
